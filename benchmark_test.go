@@ -15,8 +15,8 @@ func TestBenchmark_BubbleSort_QuickSort(t *testing.T) {
 	for i := 0; i < len(sut); i++ {
 		sut[i] = rand.Int()
 	}
-	sutQuick := sut
 	sutBubble := sut
+	sutQuick := sut
 
 	startBubble := time.Now()
 	bubbleSort(sutBubble[:])
@@ -33,7 +33,34 @@ func TestBenchmark_BubbleSort_QuickSort(t *testing.T) {
 	stopQuick := time.Now()
 
 	quickDuration := stopQuick.Sub(startQuick).Milliseconds()
-
 	fmt.Printf("Quick sort: %v\n", quickDuration)
+
 	assert.Less(t, quickDuration, bubbleDuration)
+}
+
+func TestBenchmark_QuickSort_QuickSortConcurrent(t *testing.T) {
+	var sut [2000000]int
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < len(sut); i++ {
+		sut[i] = rand.Int()
+	}
+	sutQuick := sut
+	sutConcurrentQuick := sut
+
+	startQuick := time.Now()
+	Sort(sutQuick[:])
+	stopQuick := time.Now()
+
+	quickDuration := stopQuick.Sub(startQuick).Milliseconds()
+	fmt.Printf("Quick sort: %v\n", quickDuration)
+
+	startConcurrentQuick := time.Now()
+	Sort(sutConcurrentQuick[:])
+	stopConcurrentQuick := time.Now()
+
+	concurrentQuickDuration := stopConcurrentQuick.
+		Sub(startConcurrentQuick).Milliseconds()
+	fmt.Printf("Concurrent quick sort: %v\n", concurrentQuickDuration)
+
+	assert.LessOrEqual(t, concurrentQuickDuration, quickDuration)
 }
